@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "namespace": "studio.guidance",
+  "name": "skill-creator",
+  "type": "skill",
+  "display_name": "Skill Creator",
+  "description": "Compila e salva una nuova skill SKILL.md custom quando l'utente / admin chiede di \\\"ricordare sempre\\\", aggiungere una nuova capability o estendere il comportamento dell'assistente con istruzioni durevoli.",
+  "license": "MIT"
+}
