@@ -1,7 +1,6 @@
 ---
-slug: skill-creator
+name: skill-creator
 description: "Compila e salva una nuova skill SKILL.md custom quando l'utente / admin chiede di \"ricordare sempre\", aggiungere una nuova capability o estendere il comportamento dell'assistente con istruzioni durevoli."
-is_core: true
 ---
 # Skill creator — bottom-up skill genesis
 
