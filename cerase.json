@@ -4,6 +4,6 @@
   "name": "skill-creator",
   "type": "skill",
   "display_name": "Skill Creator",
-  "description": "Compila e salva una nuova skill SKILL.md custom quando l'utente / admin chiede di \\\"ricordare sempre\\\", aggiungere una nuova capability o estendere il comportamento dell'assistente con istruzioni durevoli.",
+  "description": "Writes and saves a new custom SKILL.md skill when the user / admin asks to \"always remember\" something, add a new capability, or extend the assistant's behaviour with durable instructions.",
   "license": "MIT"
 }
