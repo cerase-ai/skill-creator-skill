@@ -1,6 +1,6 @@
 ---
 name: skill-creator
-description: "Compila e salva una nuova skill SKILL.md custom quando l'utente / admin chiede di \"ricordare sempre\", aggiungere una nuova capability o estendere il comportamento dell'assistente con istruzioni durevoli."
+description: "Manages the colleague's own skills: writes and saves a new custom SKILL.md, imports a ready-made one from a public repository URL, and lists or deletes the ones they own. Use it when they ask you to \"ricordare sempre\" something, add a capability, extend the assistant's behaviour with a durable instruction, or bring in a skill that already exists elsewhere."
 ---
 # Skill creator — bottom-up skill genesis
 
@@ -17,7 +17,7 @@ Trigger patterns (Italian/English):
 Don't activate for:
 - one-shot questions ("how do I X?") — answer directly
 - ephemeral preferences that fit `memory-curator` better ("chiamami Marco" → memory, not skill)
-- requests to **install an existing skill** from elsewhere — that's `skill-installer`
+- a request whose whole content is **importing an existing skill** from a public URL — `skill-installer` takes precedence there. This skill imports too (Stage 3), and reaches that call while already managing the colleague's own skills, never as the reason to activate
 
 ## Stage 1 — extract the brief (1 question max)
 
