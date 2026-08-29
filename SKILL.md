@@ -1,6 +1,6 @@
 ---
 name: skill-creator
-description: "Manages the colleague's own skills: writes and saves a new custom SKILL.md, imports a ready-made one from a public repository URL, and lists or deletes the ones they own. Use it when they ask you to \"ricordare sempre\" something, add a capability, extend the assistant's behaviour with a durable instruction, or bring in a skill that already exists elsewhere."
+description: "Manages the colleague's own skills: writes and saves a new custom SKILL.md, imports a ready-made one from a public repository URL, and lists or deletes the ones they own. Use it when they ask you to \"always remember\" something, add a capability, extend the assistant's behaviour with a durable instruction, or bring in a skill that already exists elsewhere."
 ---
 # Skill creator — bottom-up skill genesis
 
@@ -8,21 +8,21 @@ The user (or admin) wants you to **remember a durable instruction** that should 
 
 ## When to activate
 
-Trigger patterns (Italian/English):
-- "ricordati sempre di..." / "d'ora in poi quando..." / "voglio che tu sappia che..."
-- "crea una skill che..." / "add a skill for..."
-- "insegna ti a fare X" / "learn to handle X"
+Trigger patterns:
+- "always remember to..." / "from now on, when..." / "I want you to know that..."
+- "create a skill that..." / "add a skill for..."
+- "teach yourself to handle X" / "learn to handle X"
 - The user describes a **process / policy / preference / template** that should apply across future turns
 
 Don't activate for:
 - one-shot questions ("how do I X?") — answer directly
-- ephemeral preferences that fit `memory-curator` better ("chiamami Marco" → memory, not skill)
+- ephemeral preferences that fit `memory-curator` better ("call me Marco" → memory, not skill)
 - a request whose whole content is **importing an existing skill** from a public URL — `skill-installer` takes precedence there. This skill imports too (Stage 3), and reaches that call while already managing the colleague's own skills, never as the reason to activate
 
 ## Stage 1 — extract the brief (1 question max)
 
 Most of the time the user gives you enough context inline. If genuinely unclear:
-- ask ONE clarification ("vuoi che applichi questa regola sempre, o solo per il template X?")
+- ask ONE clarification, in the user's language ("should I always apply this rule, or only to template X?")
 - propose a **draft frontmatter + body**, show it to the user, get green light
 
 ## Stage 2 — compile the SKILL.md
@@ -59,9 +59,9 @@ Rules:
 
 ## Stage 3 — confirm + save
 
-Show the user a 2-line summary:
+Show the user a 2-line summary, in their language:
 
-> Sto creando la skill `<slug>`: "<one-line description>". Procedo?
+> I'm creating the skill `<slug>`: "<one-line description>". Shall I go ahead?
 
 When the user says yes, POST to the internal endpoint:
 
@@ -77,7 +77,7 @@ The skill is saved as the user's OWN skill (you don't pass any identity — the 
 
 ## Failures
 
-- 409 conflict → slug already used → suggest a variant or ask the user ("esiste già una skill `<slug>` — la vuoi sostituire o creo `<slug>-v2`?")
+- 409 conflict → slug already used → suggest a variant or ask the user, in their language ("a skill `<slug>` already exists — do you want to replace it, or shall I create `<slug>-v2`?")
 - 422 validation → typically description too short or metadata too big → fix + retry once
 - 5xx → don't retry blindly. Tell the user, save the draft as workspace file `pending-skill-<slug>.md`, suggest re-running later.
 
@@ -85,4 +85,4 @@ The skill is saved as the user's OWN skill (you don't pass any identity — the 
 
 - Don't create skills for things that should be `memory-curator` write calls (preferences, facts about the user) — wrong tool.
 - Don't echo the full SKILL.md body in chat — that's noise. Show the slug + 1-line description, that's enough.
-- Don't invent capabilities the agent can't actually deliver ("chiama l'API X") — if the recipe doesn't exist, the skill won't work. Check what `## Knowledge bases` and tool list expose before composing.
+- Don't invent capabilities the agent can't actually deliver ("call the X API") — if the recipe doesn't exist, the skill won't work. Check what `## Knowledge bases` and tool list expose before composing.
