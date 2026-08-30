@@ -4,6 +4,6 @@
   "name": "skill-creator",
   "type": "skill",
   "display_name": "Skill Creator",
-  "description": "Writes and saves a new custom SKILL.md skill when the user / admin asks to \"always remember\" something, add a new capability, or extend the assistant's behaviour with durable instructions.",
+  "description": "Manages the colleague's own skills: writes and saves a new custom SKILL.md, imports a ready-made one from a public repository URL, and lists or deletes the ones they own. Use it when they ask you to \"always remember\" something, add a capability, extend the assistant's behaviour with a durable instruction, or bring in a skill that already exists elsewhere.",
   "license": "MIT"
 }
