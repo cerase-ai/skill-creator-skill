@@ -53,6 +53,7 @@ license: Apache-2.0
 
 Rules:
 - **slug**: kebab-case, 3-64 chars, [a-z0-9-]. Pick something specific (`forest-fattura-pec` over `policy-1`).
+- **display_name**: the name the colleague used, copied verbatim — their capitals, their spacing, their language. Deriving the slug destroys all of it (`Nota spese Adriatica` → `nota-spese-adriatica`), and this is the only place it survives: the console shows this name. If they never named it, write the name you would read out to them; don't repeat the slug.
 - **description**: must be ≥ 40 chars and ≤ 1024. Mention BOTH the behavior AND the trigger.
 - **body**: at least 80 chars. Aim for 200-2000 — enough to be actionable, not so much that it's unreadable.
 - **license**: default `Apache-2.0` for user-created skills (they own the IP via tenant agreement).
@@ -68,6 +69,7 @@ When the user says yes, POST to the internal endpoint:
 ```
 call_recipe("skills.create", {
   slug: "<slug>",
+  display_name: "<the colleague's own name for it, verbatim>",
   description: "<full description>",
   body: "<full SKILL.md body without the YAML frontmatter — the controller stores them in separate columns>"
 })
