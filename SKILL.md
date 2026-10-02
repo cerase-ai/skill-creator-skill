@@ -81,11 +81,9 @@ The skill is saved as the user's OWN skill (you don't pass any identity — the 
 
 The user can also ask for a skill that already exists in a public repository. An imported skill is a set of instructions somebody else wrote that you will then follow, with the connectors this assistant already holds, so inspect it before you install it:
 
-1. Run the security check — it is read-only and installs nothing:
-   `call_recipe("skills.security_scan", {"git_url": "<public github/gitlab url>"})`
+1. Run the security check — it is read-only and installs nothing: `call_recipe("skills.security_scan", {"git_url": "<public github/gitlab url>"})`
 2. Say in one or two lines, in the user's language, what the check reported and what the skill asks you to do — which recipes it calls, and what it would send where.
-3. Import only after the user answers:
-   `call_recipe("skills.import", { git_url: "<public github/gitlab url>" })`
+3. Import only after the user answers: `call_recipe("skills.import", { git_url: "<public github/gitlab url>" })`
 
 An `esito` of `Non disponibile` or `Non analizzata` means the check has no opinion, not that the skill is safe: say so and let the user decide with that stated.
 
