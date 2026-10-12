@@ -3,10 +3,10 @@
 A Cerase skill that lets a person manage their own skills through the
 assistant: write and save a new `SKILL.md`, import one from a public repository,
 list the ones they own, and delete them. The assistant uses it when someone
-asks it to "always remember" a process, policy or template, to add a
-capability, or to extend its behaviour with a lasting instruction. A preference
-or a fact about the person ("call me Marco") goes to memory instead, and a
-request that is only an import from a URL goes to `skill-installer`.
+asks for a skill: a procedure or template it follows whenever a kind of request
+comes. A rule or preference for how the assistant works ("call me Marco", "from
+now on…") and a fact about the person are not skills, and a request that is
+only an import from a URL goes to `skill-installer`.
 
 ## What the assistant does
 

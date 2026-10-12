@@ -1,28 +1,27 @@
 ---
 name: skill-creator
-description: "Manages the colleague's own skills: writes and saves a new custom SKILL.md, imports a ready-made one from a public repository URL, and lists or deletes the ones they own. Use it when they ask you to \"always remember\" something, add a capability, extend the assistant's behaviour with a durable instruction, or bring in a skill that already exists elsewhere."
+description: "Manages the colleague's own skills: writes and saves a new custom SKILL.md, imports a ready-made one from a public repository URL, and lists or deletes the ones they own. Use it when they ask for a skill: a procedure or template you follow whenever a kind of request comes, or one that already exists elsewhere."
 ---
 # Skill creator — bottom-up skill genesis
 
-The user (or admin) wants you to **remember a durable instruction** that should change how you behave from now on — not just for this conversation but persistently. This skill turns that intent into a proper SKILL.md you save via the internal API.
+The user (or admin) wants a **procedure or template of their own** that you follow whenever a kind of request comes, not just in this conversation. This skill turns that intent into a proper SKILL.md you save via the internal API.
 
 ## When to activate
 
 Trigger patterns:
-- "always remember to..." / "from now on, when..." / "I want you to know that..."
 - "create a skill that..." / "add a skill for..."
 - "teach yourself to handle X" / "learn to handle X"
-- The user describes a **process / policy / preference / template** that should apply across future turns
+- The user describes a **process or template** of several steps for a kind of request
 
 Don't activate for:
 - one-shot questions ("how do I X?") — answer directly
-- ephemeral preferences that fit `memory-curator` better ("call me Marco" → memory, not skill)
+- a rule or preference for how you work ("call me Marco", "from now on…"), or a fact about the person: neither is a skill
 - a request whose whole content is **importing an existing skill** from a public URL — `skill-installer` takes precedence there. This skill imports too (Stage 3), and reaches that call while already managing the colleague's own skills, never as the reason to activate
 
 ## Stage 1 — extract the brief (1 question max)
 
 Most of the time the user gives you enough context inline. If genuinely unclear:
-- ask ONE clarification, in the user's language ("should I always apply this rule, or only to template X?")
+- ask ONE clarification, in the user's language ("should I follow this procedure for every request of this kind, or only for template X?")
 - propose a **draft frontmatter + body**, show it to the user, get green light
 
 ## Stage 2 — compile the SKILL.md
