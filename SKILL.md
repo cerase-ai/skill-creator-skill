@@ -1,99 +1,82 @@
 ---
 name: skill-creator
-description: "Manages the colleague's own skills: writes and saves a new custom SKILL.md, imports a ready-made one from a public repository URL, and lists or deletes the ones they own. Use it when they ask for a skill: a procedure or template you follow whenever a kind of request comes, or one that already exists elsewhere."
+description: "Writes, changes, imports and deletes the person's own skills: procedures the assistant follows whenever a given kind of request comes in. Load it when the person asks to save or create a skill, when the person has walked the assistant through a task in several steps, when the person asks again for a task already done, or when the person describes a routine; in the last three cases it offers once to save the task. Not for a fact about the person, a rule about how the assistant works, or a request that is only to import a skill from a URL."
 ---
-# Skill creator — bottom-up skill genesis
+# Skill creator
 
-The user (or admin) wants a **procedure or template of their own** that you follow whenever a kind of request comes, not just in this conversation. This skill turns that intent into a proper SKILL.md you save via the internal API.
+A skill is a procedure the assistant follows whenever a given kind of request comes in. This skill writes, changes, imports and deletes the person's own skills, and says when to offer to save a task as one.
 
-## When to activate
+In Italian, call a skill «competenza». When you offer to save one, explain it with the console's own sentence: «Una competenza è qualcosa che l'assistente ha imparato a fare, o la procedura che segue per farlo.»
 
-Trigger patterns:
-- "create a skill that..." / "add a skill for..."
-- "teach yourself to handle X" / "learn to handle X"
-- The user describes a **process or template** of several steps for a kind of request
+## Offering to save a task
 
-Don't activate for:
-- one-shot questions ("how do I X?") — answer directly
-- a rule or preference for how you work ("call me Marco", "from now on…"), or a fact about the person: neither is a skill
-- a request whose whole content is **importing an existing skill** from a public URL — `skill-installer` takes precedence there. This skill imports too (Stage 3), and reaches that call while already managing the colleague's own skills, never as the reason to activate
+When the person walks you through a task in several steps, asks again for a task you already did, or describes a routine, do the task first. Then offer once, in one line, to save it as a skill. If the person declines or does not answer, do not offer it again in that conversation. Nothing is created until the person agrees. Do not offer for a one-off question, a rule about how you work, or a fact about the person.
 
-## Stage 1 — extract the brief (1 question max)
+## Before writing: list first
 
-Most of the time the user gives you enough context inline. If genuinely unclear:
-- ask ONE clarification, in the user's language ("should I follow this procedure for every request of this kind, or only for template X?")
-- propose a **draft frontmatter + body**, show it to the user, get green light
+Before creating a skill, call `call_recipe("skills.list", {})` and read the person's own skills. If one of them already does the same task, change it with `skills.update` instead of creating a second one.
 
-## Stage 2 — compile the SKILL.md
+## Writing the skill
 
-Produce a SKILL.md following agentskills.io standard:
+- Write the skill in English unless the person asks for another language. Talk to the person in their language.
+- `display_name` is the person's own name for the skill, verbatim: their capitals, their spacing, their language.
+- The `description` is short and in the third person. It says what the skill does and when to load it, because the body is read only after the description loaded the skill.
+- The body holds the steps and nothing else. A personal skill is one file, so there is no reference material.
+- The skill names no person, account, mailbox or address. It says "the person", or names the connection or connector. What changes on each run is asked for or looked up when the skill runs, never stored in it.
+- The test for every sentence: would this text still be right if another colleague installed it?
+- Name only recipes that exist, by their exact `call_recipe(...)` call. If something the skill needs does not exist, tell the person instead of inventing a call.
+- The skill carries no time or day. Those stay in the scheduled message, which names the skill instead of repeating its steps.
+- Write plain sentences, without slogans or motivational framing.
+- Keep the field limits: slug is kebab-case, 3-64 characters, `[a-z0-9-]`; description is 40-1024 characters; body is at least 80 characters.
 
 ```
 ---
-name: <kebab-case-slug>
-description: <40-1024 chars: what the skill does AND when it should activate>
-license: Apache-2.0
+name: open-orders-summary
+description: Summarises a supplier's open orders and lists the late ones. Use when the person asks where the orders of a supplier stand.
 ---
 
-# <Title>
+# Open orders summary
 
-## When to activate
-
-<concrete triggers — be explicit about user-facing patterns>
-
-## What to do
-
-<step-by-step process or rules>
-
-## Don't
-
-<failure modes / what NOT to do>
+1. Ask the person which supplier, or read it from the request.
+2. Read that supplier's open orders with the exact call_recipe(...) call its connector offers.
+3. Group them by status and list the ones that are late.
+4. Report the result in a short list.
 ```
 
-Rules:
-- **slug**: kebab-case, 3-64 chars, [a-z0-9-]. Pick something specific (`forest-fattura-pec` over `policy-1`).
-- **display_name**: the name the colleague used, copied verbatim — their capitals, their spacing, their language. Deriving the slug destroys all of it (`Nota spese Adriatica` → `nota-spese-adriatica`), and this is the only place it survives: the console shows this name. If they never named it, write the name you would read out to them; don't repeat the slug.
-- **description**: must be ≥ 40 chars and ≤ 1024. Mention BOTH the behavior AND the trigger.
-- **body**: at least 80 chars. Aim for 200-2000 — enough to be actionable, not so much that it's unreadable.
-- **license**: default `Apache-2.0` for user-created skills (they own the IP via tenant agreement).
+An example `display_name` in Italian, with the person's capitals: `Riepilogo Ordini aperti`.
 
-## Stage 3 — confirm + save
+## Saving
 
-Show the user a 2-line summary, in their language:
-
-> I'm creating the skill `<slug>`: "<one-line description>". Shall I go ahead?
-
-When the user says yes, POST to the internal endpoint:
+Show the person a short summary in their language: the name and one line on what it does. Then make the call. The platform asks the person to approve it, and that approval is their confirmation, so do not ask for a second confirmation first.
 
 ```
 call_recipe("skills.create", {
   slug: "<slug>",
-  display_name: "<the colleague's own name for it, verbatim>",
-  description: "<full description>",
-  body: "<full SKILL.md body without the YAML frontmatter — the controller stores them in separate columns>"
+  display_name: "<the person's own name, verbatim>",
+  description: "<short third-person description>",
+  body: "<the instructions without the frontmatter>"
 })
 ```
 
-The skill is saved as the user's OWN skill (you don't pass any identity — the platform binds it to your user). It returns `{ok, skill_id, slug}` on success or `409` if the slug already exists. To see or remove the user's own skills, use `skills.list` / `skills.delete`; to import a ready-made skill from a public repo instead, follow *Importing instead of writing* below.
+To change a skill, call `call_recipe("skills.update", { slug: "<slug>", ... })` and pass only what changes. The body is sent back complete, because it replaces the whole instructions: load the skill with the `skill` tool and send its body back with the change. Never delete a skill and create it again to change it. To remove one, call `call_recipe("skills.delete", { slug: "<slug>" })`.
 
 ## Importing instead of writing
 
-The user can also ask for a skill that already exists in a public repository. An imported skill is a set of instructions somebody else wrote that you will then follow, with the connectors this assistant already holds, so inspect it before you install it:
+The person can also ask for a skill that already exists in a public repository. An imported skill is a set of instructions somebody else wrote that you will then follow, with the connectors this assistant already holds, so inspect it before you install it:
 
-1. Run the security check — it is read-only and installs nothing: `call_recipe("skills.security_scan", {"git_url": "<public github/gitlab url>"})`
-2. Say in one or two lines, in the user's language, what the check reported and what the skill asks you to do — which recipes it calls, and what it would send where.
-3. Import only after the user answers: `call_recipe("skills.import", { git_url: "<public github/gitlab url>" })`
+1. Run the security check; it is read-only and installs nothing: `call_recipe("skills.security_scan", {"git_url": "<public github/gitlab url>"})`
+2. Say in one or two lines, in the person's language, what the check reported and what the skill asks you to do: which recipes it calls, and what it would send where.
+3. Import only after the person answers: `call_recipe("skills.import", { git_url: "<public github/gitlab url>" })`
 
-An `esito` of `Non disponibile` or `Non analizzata` means the check has no opinion, not that the skill is safe: say so and let the user decide with that stated.
+An `esito` of `Non disponibile` or `Non analizzata` means the check has no opinion, not that the skill is safe: say so and let the person decide with that stated.
 
 ## Failures
 
-- 409 conflict → slug already used → suggest a variant or ask the user, in their language ("a skill `<slug>` already exists — do you want to replace it, or shall I create `<slug>-v2`?")
-- 422 validation → typically description too short or metadata too big → fix + retry once
-- 5xx → don't retry blindly. Tell the user, save the draft as workspace file `pending-skill-<slug>.md`, suggest re-running later.
+- 409: the slug is taken. A slug is unique across the whole platform, so the name may belong to a system skill, an organisation skill or another person's skill. If it is one of the person's own skills doing the same task, change it with `skills.update`; otherwise pick a distinct name, never a version suffix.
+- 422: fix the field the platform names and retry once.
+- 5xx: do not retry blindly. Tell the person and save the draft as the workspace file `pending-skill-<slug>.md`.
 
 ## Don't
 
-- Don't create skills for things that should be `memory-curator` write calls (preferences, facts about the user) — wrong tool.
-- Don't echo the full SKILL.md body in chat — that's noise. Show the slug + 1-line description, that's enough.
-- Don't invent capabilities the agent can't actually deliver ("call the X API") — if the recipe doesn't exist, the skill won't work. Check what `## Knowledge bases` and tool list expose before composing.
+- Do not paste the whole skill into the chat; the summary is enough.
+- A fact about the person or a rule about how you work is not a skill: do not save either as one.

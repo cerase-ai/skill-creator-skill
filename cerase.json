@@ -4,6 +4,6 @@
   "name": "skill-creator",
   "type": "skill",
   "display_name": "Skill Creator",
-  "description": "Manages the colleague's own skills: writes and saves a new custom SKILL.md, imports a ready-made one from a public repository URL, and lists or deletes the ones they own. Use it when they ask for a skill: a procedure or template you follow whenever a kind of request comes, or one that already exists elsewhere.",
+  "description": "Writes, changes, imports and deletes the person's own skills: procedures the assistant follows whenever a given kind of request comes in. Load it when the person asks to save or create a skill, when the person has walked the assistant through a task in several steps, when the person asks again for a task already done, or when the person describes a routine; in the last three cases it offers once to save the task. Not for a fact about the person, a rule about how the assistant works, or a request that is only to import a skill from a URL.",
   "license": "MIT"
 }
