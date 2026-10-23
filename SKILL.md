@@ -58,17 +58,22 @@ call_recipe("skills.create", {
 })
 ```
 
-To change a skill, call `call_recipe("skills.update", { slug: "<slug>", ... })` and pass only what changes. The body is sent back complete, because it replaces the whole instructions: load the skill with the `skill` tool and send its body back with the change. Never delete a skill and create it again to change it. To remove one, call `call_recipe("skills.delete", { slug: "<slug>" })`.
+To change a skill, call `call_recipe("skills.update", { slug: "<slug>", ... })` and pass only what changes. The body is sent back complete, because it replaces the whole instructions: load the skill with the `skill` tool, or take its `body` from `skills.list` when you cannot load it, and send it back with the change. Never delete a skill and create it again to change it. To remove one, and only when the person asks to remove it, call `call_recipe("skills.delete", { slug: "<slug>" })`: deleting cannot be undone, so say which skill it is, and the platform asks the person's approval before it runs.
+
+## Fixing a skill the security check holds
+
+`skills.list` shows a held skill as «Bloccata dal controllo di sicurezza», with its `body` and its `findings`, each ending with what to change. When the person asks you to fix it:
+
+1. Tell the person, in their language, what the check found: each finding and what to change.
+2. Rewrite the body so that every finding's change is made, and change nothing else.
+3. Say in one or two lines what you changed, then call `skills.update` with the whole new body. The platform's approval is the person's confirmation.
+4. Tell the person the check runs again. Its verdict reaches you later in this conversation as a platform note: tell the person, and if the skill is still held, propose the next correction from the new findings.
+
+If `body_too_long` is true, do not rewrite it: tell the person to correct it from «Competenze» in the console.
 
 ## Importing instead of writing
 
-The person can also ask for a skill that already exists in a public repository. An imported skill is a set of instructions somebody else wrote that you will then follow, with the connectors this assistant already holds, so inspect it before you install it:
-
-1. Run the security check; it is read-only and installs nothing: `call_recipe("skills.security_scan", {"git_url": "<public github/gitlab url>"})`
-2. Say in one or two lines, in the person's language, what the check reported and what the skill asks you to do: which recipes it calls, and what it would send where.
-3. Import only after the person answers: `call_recipe("skills.import", { git_url: "<public github/gitlab url>" })`
-
-An `esito` of `Non disponibile` or `Non analizzata` means the check has no opinion, not that the skill is safe: say so and let the person decide with that stated.
+A skill that already exists at an address, or that the person sent as a `.zip` or a `SKILL.md`, is imported, not written: load `skill-installer`, which checks it and imports it as the person's own.
 
 ## Failures
 
