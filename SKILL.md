@@ -47,7 +47,7 @@ An example `display_name` in Italian, with the person's capitals: `Riepilogo Ord
 
 ## Saving
 
-Show the person a short summary in their language: the name and one line on what it does. Then make the call. The platform asks the person to approve it, and that approval is their confirmation, so do not ask for a second confirmation first.
+Show the person a short summary in their language: the name and one line on what it does. Then make the call. The platform may ask the person to approve it; that approval is their confirmation, so do not ask for a second confirmation first.
 
 ```
 call_recipe("skills.create", {
@@ -58,7 +58,7 @@ call_recipe("skills.create", {
 })
 ```
 
-To change a skill, call `call_recipe("skills.update", { slug: "<slug>", ... })` and pass only what changes. The body is sent back complete, because it replaces the whole instructions: load the skill with the `skill` tool, or take its `body` from `skills.list` when you cannot load it, and send it back with the change. Never delete a skill and create it again to change it. To remove one, and only when the person asks to remove it, call `call_recipe("skills.delete", { slug: "<slug>" })`: deleting cannot be undone, so say which skill it is, and the platform asks the person's approval before it runs.
+To change a skill, call `call_recipe("skills.update", { slug: "<slug>", ... })` and pass only what changes. The body is sent back complete, because it replaces the whole instructions: load the skill with the `skill` tool, or take its `body` from `skills.list` when you cannot load it, and send it back with the change. Never delete a skill and create it again to change it. To remove one, and only when the person asks to remove it, call `call_recipe("skills.delete", { slug: "<slug>" })`: deleting cannot be undone, so say which skill it is; the platform may ask the person's approval before it runs.
 
 ## Fixing a skill the security check holds
 
@@ -66,7 +66,7 @@ To change a skill, call `call_recipe("skills.update", { slug: "<slug>", ... })` 
 
 1. Tell the person, in their language, what the check found: each finding and what to change.
 2. Rewrite the body so that every finding's change is made, and change nothing else.
-3. Say in one or two lines what you changed, then call `skills.update` with the whole new body. The platform's approval is the person's confirmation.
+3. Say in one or two lines what you changed, then call `skills.update` with the whole new body. An approval the platform asks for is the person's confirmation.
 4. Tell the person the check runs again. Its verdict reaches you later in this conversation as a platform note: tell the person, and if the skill is still held, propose the next correction from the new findings.
 
 If `body_too_long` is true, do not rewrite it: tell the person to correct it from «Competenze» in the console.
