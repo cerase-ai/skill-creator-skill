@@ -25,6 +25,7 @@ Before creating a skill, call `call_recipe("skills.list", {})` and read the pers
 - The skill names no person, account, mailbox or address. It says "the person", or names the connection or connector. What changes on each run is asked for or looked up when the skill runs, never stored in it.
 - The test for every sentence: would this text still be right if another colleague installed it?
 - Name only recipes that exist, by their exact `call_recipe(...)` call. If something the skill needs does not exist, tell the person instead of inventing a call.
+- A step that writes through a connector names the recipe and where each value comes from, and leaves how an argument is written to the connector, which says it on the argument itself each time the skill runs. Before saving, call `call_recipe("recipe.describe", { name: "<recipe>" })` for every recipe the skill calls, and check each argument the skill fixes against what it returns. When the connector previews or validates a write without running it, as Odoo's `preview_write` does, make that call once with the values the skill prescribes, and correct the skill if it refuses them. Never copy an argument's form from memory or from a call that failed.
 - The skill carries no time or day. Those stay in the scheduled message, which names the skill instead of repeating its steps.
 - Write plain sentences, without slogans or motivational framing.
 - Keep the field limits: slug is kebab-case, 3-64 characters, `[a-z0-9-]`; description is 40-1024 characters; body is at least 80 characters.
